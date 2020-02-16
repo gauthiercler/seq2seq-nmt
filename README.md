@@ -1,5 +1,7 @@
 ## Neural Machine Translation with seq2seq architecture
 
+
+
 #### TODO
 
 - [ ] Beam Search
@@ -14,3 +16,4 @@
 - [ ] Multiple language pairs support
 - [X] train, dev, test sets
 - [ ] buckets
+- [ ] backward feeding
