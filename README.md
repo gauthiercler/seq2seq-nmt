@@ -1,5 +1,8 @@
 ## Neural Machine Translation with seq2seq architecture
 
+![](https://cdn-images-1.medium.com/max/1000/1*PFPSLEjIe152uR9UR59LDA.png)  
+*Image from Standford CS224N*
+
 #### Usage
 
 ````shell script
