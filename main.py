@@ -13,6 +13,8 @@ from tqdm import tqdm
 
 from utils import sentence_to_tensor, get_key, pair_to_tensor
 
+from nltk.translate.bleu_score import sentence_bleu
+
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 args = parse_arguments()
@@ -91,12 +93,15 @@ def main():
                 tqdm_bar.set_description(f'Epoch: {epoch + 1}/{args.epochs}, loss={(total_loss / args.verbose_rate):.3f}')
                 total_loss = 0
 
+    bleu = 0
     for pair in test:
         out_seq = evaluate(encoder, decoder, pair[0], source_lang, target_lang)
+        bleu += sentence_bleu([pair[1].split(' ')], out_seq)
         print(f'source seq\t-> {pair[0]}')
         print(f'ground truth\t-> {pair[1]}')
         print(f'generated seq\t-> {" ".join(out_seq)}', end='\n\n')
-
+    bleu /= len(test)
+    print(f'Bleu score: {bleu}')
 
 if __name__ == '__main__':
     main()

@@ -47,3 +47,4 @@ optional arguments:
 - [X] train, dev, test sets
 - [ ] buckets
 - [ ] backward feeding
+- [X] Bleu score
