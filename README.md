@@ -36,6 +36,8 @@ optional arguments:
 
 ````
 
+Data from https://www.manythings.org/anki/, extracted from Tatoeba Project
+
 #### TODO
 - [ ] Beam Search
 - [X] Curriculum Teacher Forcing
