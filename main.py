@@ -96,8 +96,8 @@ def main():
             'epoch': epoch,
             'encoder_state_dict': encoder.state_dict(),
             'encoder_optim': encoder_optimizer.state_dict(),
-            'decoder_state_didct': decoder.state_dict(),
-            'decoder_state_dict': decoder_optimizer.state_dict(),
+            'decoder_state_dict': decoder.state_dict(),
+            'decoder_optim': decoder_optimizer.state_dict(),
             'params': args
         }, f'model/epoch_{epoch}_{time.strftime("%Y-%m-%d:%H:%M:%S")}.pth')
     bleu = 0
