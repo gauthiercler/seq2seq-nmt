@@ -54,10 +54,3 @@ class DataLoader:
                 lang.append(href.split('.')[0].split('-')[0])
 
         return lang
-
-
-if __name__ == '__main__':
-    p = DataLoader()
-    p.get_available_lang()
-    p.download_and_extract()
-    p.prepare('afr')
