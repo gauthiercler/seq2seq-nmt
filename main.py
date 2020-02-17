@@ -53,7 +53,7 @@ def main():
     print(torch.cuda.is_available())
     print(args)
 
-    pairs, source_lang, target_lang = load_data(args.lang, args.max_words)
+    pairs, source_lang, target_lang = load_data(args.lang, args.max_words, args.reversed)
     train, dev, test = train_dev_test_split(pairs)
 
     train_tensors = [pair_to_tensor(p, source_lang, target_lang, device) for p in train]
@@ -103,10 +103,10 @@ def main():
     bleu = 0
     for pair in test:
         out_seq = evaluate(encoder, decoder, pair[0], source_lang, target_lang)
-        bleu += sentence_bleu([pair[1].split(' ')], out_seq)
+        bleu += sentence_bleu([pair[1]], out_seq)
         print(f'source seq\t-> {pair[0]}')
         print(f'ground truth\t-> {pair[1]}')
-        print(f'generated seq\t-> {" ".join(out_seq)}', end='\n\n')
+        print(f'generated seq\t-> {out_seq}', end='\n\n')
     bleu /= len(test)
     print(f'Bleu score: {bleu}')
 

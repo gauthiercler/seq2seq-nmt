@@ -35,7 +35,7 @@ def sentence_length_threshold(pair, max_length):
     return all((len(p) <= max_length for p in pair))
 
 
-def load_data(lang, max_length):
+def load_data(lang, max_length, reversed):
     loader = DataLoader()
     loader.download_and_extract(lang)
     dataset = loader.prepare(lang)
@@ -44,6 +44,8 @@ def load_data(lang, max_length):
     output_dict = Dict()
     for sample in dataset.examples:
         pair = (normalize(sample.source), normalize(sample.target))
+        if reversed:
+            pair = (pair[1], pair[0])
         if sentence_length_threshold(pair, max_length):
             [input_dict.add(w) for w in pair[0]]
             [output_dict.add(w) for w in pair[1]]

@@ -12,8 +12,8 @@ def parse_arguments():
     argparser.add_argument('--learning-rate', type=float, default=0.01, help='step size toward minimum of loss')
     argparser.add_argument('--lang', choices=DataLoader.get_available_lang(),
                            default='fra', help='lang pair to translate from/to')
-    argparser.add_argument('--from-english', action='store_true', help='if defined, translate from english to --lang, '
-                                                                       'otherwise translate to english')
+    argparser.add_argument('--reversed', action='store_true', help='if defined, translate from --lang to english, '
+                                                                   'otherwise translate from english')
     argparser.add_argument('--epochs', type=int, default=10, help='number of epochs to train on dataset')
     argparser.add_argument('--dropout', type=float, default=0.1, help='probability to apply dropout for regularization')
     argparser.add_argument('--max-words', type=int, default=3, help='maximum number of words by sentence')
