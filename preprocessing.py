@@ -1,6 +1,6 @@
 import re
 
-from tokens import tokens
+from tokens import Tokens
 
 
 def normalize_string(s):
@@ -12,7 +12,7 @@ def normalize_string(s):
 
 class Dict:
     def __init__(self):
-        self.dict = tokens
+        self.dict = {k: Tokens[k].value for k in dir(Tokens) if not k.startswith('__')}
         self.max_id = len(self.dict)
 
     def add(self, word):
@@ -29,7 +29,6 @@ def get_max_length(pairs):
 
 
 def sentence_length_threshold(pair, max_length):
-    print(pair)
     return all((len(p.split(' ')) <= max_length for p in pair))
 
 

@@ -1,11 +1,11 @@
 import torch
 
-from tokens import tokens
+from tokens import Tokens
 
 
 def sentence_to_tensor(sentence, dict, device):
-    ids = [dict.dict[w] if w in dict.dict else tokens['UKN'] for w in sentence.split(' ')]
-    ids.append(tokens['EOS'])
+    ids = [dict.dict[w] if w in dict.dict else Tokens.UKN.value for w in sentence.split(' ')]
+    ids.append(Tokens.EOS.value)
     return torch.tensor(ids, dtype=torch.long).view(-1, 1).to(device=device)
 
 
