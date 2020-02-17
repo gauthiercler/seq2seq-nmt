@@ -6,9 +6,16 @@
 #### Usage
 
 ````shell script
-usage: main.py [-h] [--learning-rate LEARNING_RATE] [--epochs EPOCHS]
-               [--dropout DROPOUT] [--max-words MAX_WORDS] [--cv-size CV_SIZE]
-               [--use-attention] [--verbose-rate VERBOSE_RATE]
+usage: main.py [-h] [--learning-rate LEARNING_RATE]
+               [--lang {afr,sqi,arq,ara,aze,eus,bel,ben,ber,bos,bul,mya,yue,cat,
+                        ceb,dtp,cbk,cmn,chv,hrv,ces,dan,nld,est,fin,fra,glg,kat,
+                        deu,ell,heb,hin,hun,isl,ilo,ind,ita,jpn,kab,kan,pam,kha,
+                        khm,kor,kur,lvs,lit,nds,mkd,zsm,mal,mri,mar,nst,max,nob,
+                        pes,pol,por,ron,rus,srp,slk,slv,spa,swe,tgl,tam,tat,tel,
+                        tha,tur,tuk,ukr,urd,uig,vie,war,zza}]
+               [--reversed] [--epochs EPOCHS] [--dropout DROPOUT]
+               [--max-words MAX_WORDS] [--cv-size CV_SIZE] [--use-attention]
+               [--verbose-rate VERBOSE_RATE]
                [--sets-size SETS_SIZE [SETS_SIZE ...]]
                [--teacher-forcing {beam-search,curriculum}]
 
@@ -17,6 +24,16 @@ optional arguments:
      show this help message and exit
   --learning-rate LEARNING_RATE
      step size toward minimum of loss (default: 0.01)
+  --lang {afr,sqi,arq,ara,aze,eus,bel,ben,ber,bos,bul,mya,yue,cat,
+          ceb,dtp,cbk,cmn,chv,hrv,ces,dan,nld,est,fin,fra,glg,kat,
+          deu,ell,heb,hin,hun,isl,ilo,ind,ita,jpn,kab,kan,pam,kha,
+          khm,kor,kur,lvs,lit,nds,mkd,zsm,mal,mri,mar,nst,max,nob,
+          pes,pol,por,ron,rus,srp,slk,slv,spa,swe,tgl,tam,tat,tel,
+          tha,tur,tuk,ukr,urd,uig,vie,war,zza}
+     lang pair to translate from/to (default: fra)
+  --reversed
+     if defined, translate from --lang to english, otherwise translate from
+     english (default: False)
   --epochs EPOCHS
      number of epochs to train on dataset (default: 10)
   --dropout DROPOUT
