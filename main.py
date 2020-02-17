@@ -1,6 +1,6 @@
 import torch
 from torch import nn
-
+import time
 from argparser import parse_arguments
 from decoder import Decoder, train_decoder
 from encoder import Encoder, encode_seq
@@ -8,7 +8,7 @@ from preprocessing import load_data
 import torch.optim as optim
 from sklearn.model_selection import train_test_split
 
-from tokens import tokens
+from tokens import Tokens
 from tqdm import tqdm
 
 from utils import sentence_to_tensor, get_key, pair_to_tensor
@@ -25,15 +25,15 @@ def evaluate(encoder, decoder, sentence, source_lang, target_lang):
     with torch.no_grad():
         in_tensor = sentence_to_tensor(sentence, source_lang, device)
 
-        ctx_vec = encode_seq(encoder, in_tensor, device=device)
+        ctx_vec, outputs = encode_seq(encoder, in_tensor, device=device)
 
-        input = torch.tensor([[tokens['SOS']]]).to(device=device)
+        input = torch.tensor([[Tokens.SOS.value]]).to(device=device)
         hidden = ctx_vec
 
         for idx in range(args.max_words):
-            output, hidden = decoder(input, hidden)
+            output, hidden = decoder(input, hidden, outputs)
             topv, topi = output.topk(1)
-            if topi.item() == tokens['EOS']:
+            if topi.item() == Tokens.EOS.value:
                 break
             else:
                 out_seq.append(get_key(target_lang.dict, topi.item()))
@@ -61,8 +61,8 @@ def main():
 
     total_loss = 0
 
-    encoder = Encoder(source_lang.size(), args.cv_size, args.max_words).to(device=device)
-    decoder = Decoder(args.cv_size, target_lang.size(), args.use_attention, args.dropout,
+    encoder = Encoder(source_lang.size(), args.cv_size, args.max_words + 1).to(device=device)
+    decoder = Decoder(args.cv_size, target_lang.size(), args.max_words + 1, args.use_attention, args.dropout,
                       args.teacher_forcing).to(device=device)
 
     encoder_optimizer = optim.SGD(encoder.parameters(), lr=args.learning_rate)
@@ -79,9 +79,9 @@ def main():
             encoder_optimizer.zero_grad()
             decoder_optimizer.zero_grad()
 
-            ctx_vec = encode_seq(encoder, input, device=device)
+            ctx_vec, outputs = encode_seq(encoder, input, device=device)
 
-            loss = train_decoder(decoder, ctx_vec, output, criterion, args.teacher_forcing, device)
+            loss = train_decoder(decoder, ctx_vec, output, criterion, args.teacher_forcing, outputs, device)
 
             loss.backward()
             encoder_optimizer.step()
@@ -92,7 +92,14 @@ def main():
             if idx % args.verbose_rate == 0:
                 tqdm_bar.set_description(f'Epoch: {epoch + 1}/{args.epochs}, loss={(total_loss / args.verbose_rate):.3f}')
                 total_loss = 0
-
+        torch.save({
+            'epoch': epoch,
+            'encoder_state_dict': encoder.state_dict(),
+            'encoder_optim': encoder_optimizer.state_dict(),
+            'decoder_state_didct': decoder.state_dict(),
+            'decoder_state_dict': decoder_optimizer.state_dict(),
+            'params': args
+        }, f'model/epoch_{epoch}_{time.strftime("%Y-%m-%d:%H:%M:%S")}.pth')
     bleu = 0
     for pair in test:
         out_seq = evaluate(encoder, decoder, pair[0], source_lang, target_lang)
@@ -102,6 +109,7 @@ def main():
         print(f'generated seq\t-> {" ".join(out_seq)}', end='\n\n')
     bleu /= len(test)
     print(f'Bleu score: {bleu}')
+
 
 if __name__ == '__main__':
     main()
