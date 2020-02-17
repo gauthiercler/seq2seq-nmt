@@ -11,12 +11,10 @@ from torchtext import data
 
 
 class DataLoader:
+    base_url = 'https://www.manythings.org/anki'
 
     def __init__(self):
-        self.base_url = 'https://www.manythings.org/anki'
-        self.lang = self.get_available_lang()
         self.dataset = None
-        pass
 
     def prepare(self, lang):
         src = data.Field()
@@ -25,26 +23,27 @@ class DataLoader:
             path=f'data/{lang}.txt',
             format='TSV', fields=[('source', src), ('target', trg)])
 
-    def download_and_extract(self):
-        print('Downloading corpora')
-        iterator = tqdm(self.lang)
-        for lang in iterator:
-            if path.exists(f'data/{lang}.txt'):
-                continue
-            url = f'{self.base_url}/{lang}-eng.zip'
-            iterator.set_description(f'Downloading {url}')
-            request = Request(url, None, {'User-Agent': 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.0.7) '
-                                                        'Gecko/2009021910 Firefox/3.0.7'})
-            archive = urlopen(request)
-            fd = open(f'/tmp/{lang}.zip', 'wb')
-            fd.write(archive.read())
-            fd.close()
+        return self.dataset
 
-            zf = ZipFile(f'/tmp/{lang}.zip')
-            zf.extract(member=f'{lang.split("-")[0]}.txt', path=f'data/')
+    def download_and_extract(self, lang):
+        print('Downloading corpus')
+        if path.exists(f'data/{lang}.txt'):
+            return
+        url = f'{self.base_url}/{lang}-eng.zip'
+        request = Request(url, None, {'User-Agent': 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.0.7) '
+                                                    'Gecko/2009021910 Firefox/3.0.7'})
+        archive = urlopen(request)
+        fd = open(f'/tmp/{lang}.zip', 'wb')
+        fd.write(archive.read())
+        fd.close()
+        zf = ZipFile(f'/tmp/{lang}.zip')
+        zf.extract(member=f'{lang.split("-")[0]}.txt', path=f'data/')
 
-    def get_available_lang(self):
-        r = requests.get(self.base_url, headers={"User-Agent": "XY"})
+        return self
+
+    @staticmethod
+    def get_available_lang():
+        r = requests.get(DataLoader.base_url, headers={"User-Agent": "XY"})
         data = r.text
         soup = BeautifulSoup(data, features="html.parser")
 

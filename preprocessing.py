@@ -1,12 +1,15 @@
 import re
 
+from prepare import DataLoader
 from tokens import Tokens
 
 
-def normalize_string(s):
-    s = s.lower()
-    s = re.sub(r"[^a-zàâçéèêëîïôûùüÿñæœ]+", r" ", s)
-    s = s.strip()
+def normalize(s):
+    for idx, w in enumerate(s):
+        w = w.lower()
+        w = re.sub(r"[!?.,']+", r" ", w)
+        w = w.strip()
+        s[idx] = w
     return s
 
 
@@ -25,23 +28,25 @@ class Dict:
 
 
 def get_max_length(pairs):
-    return max([len(s.split(' ')) for pair in pairs for s in pair])
+    return max([len(s) for pair in pairs for s in pair])
 
 
 def sentence_length_threshold(pair, max_length):
-    return all((len(p.split(' ')) <= max_length for p in pair))
+    return all((len(p) <= max_length for p in pair))
 
 
-def load_data(filename, max_length):
-    content = open(filename, encoding='utf-8').read().strip().split('\n')
+def load_data(lang, max_length):
+    loader = DataLoader()
+    loader.download_and_extract(lang)
+    dataset = loader.prepare(lang)
     pairs = []
     input_dict = Dict()
     output_dict = Dict()
-    for line in content:
-        pair = tuple([normalize_string(sentence) for sentence in line.split('\t')])
+    for sample in dataset.examples:
+        pair = (normalize(sample.source), normalize(sample.target))
         if sentence_length_threshold(pair, max_length):
-            [input_dict.add(w) for w in pair[0].split(' ')]
-            [output_dict.add(w) for w in pair[1].split(' ')]
+            [input_dict.add(w) for w in pair[0]]
+            [output_dict.add(w) for w in pair[1]]
             pairs.append(pair)
     print(f'Loaded {len(pairs)} pairs')
     return pairs, input_dict, output_dict
