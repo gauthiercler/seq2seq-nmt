@@ -53,7 +53,7 @@ def main():
     print(torch.cuda.is_available())
     print(args)
 
-    pairs, source_lang, target_lang = load_data('data/eng-fra.txt', args.max_words)
+    pairs, source_lang, target_lang = load_data(args.lang, args.max_words)
     train, dev, test = train_dev_test_split(pairs)
 
     train_tensors = [pair_to_tensor(p, source_lang, target_lang, device) for p in train]
