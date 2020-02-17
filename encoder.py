@@ -19,12 +19,11 @@ class Encoder(nn.Module):
 
 def encode_seq(model, seq, device):
     hidden = torch.zeros(1, 1, model.hidden_size).to(device=device)
-    outputs = torch.zeros(model.max_words + 1, model.hidden_size)  # + 1 for EOS token
+    out = torch.zeros(model.max_words, model.hidden_size).to(device=device)
 
+    assert model.max_words >= seq.size()[0]
     for idx in range(seq.size()[0]):
         output, hidden = model(seq[idx], hidden)
+        out[idx] = output.view(-1)
 
-        # Used for attention
-        outputs[idx] = output[0, 0]
-
-    return hidden
+    return hidden, out
