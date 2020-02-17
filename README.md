@@ -41,9 +41,9 @@ optional arguments:
 - [X] Curriculum Teacher Forcing
 - [ ] Scheduled sampling
 - [ ] use LSTM
-- [ ] Attention
+- [X] Attention
 - [X] Dropout
-- [ ] Save model state at defined intervals
+- [X] Save model state at defined intervals
 - [ ] Use trained Embeddings (GloVe, Doc2Vec...)
 - [ ] Streamlit playground with trained models (or upload model)
 - [ ] Multiple language pairs support
