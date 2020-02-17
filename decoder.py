@@ -22,9 +22,10 @@ class Decoder(nn.Module):
 
     def forward(self, ctx_vector, prev_hidden, encoder_outs):
         emb = self.embedding(ctx_vector).view(1, 1, -1)
-        out = self.dropout(emb).squeeze(0)
+        out = self.dropout(emb)
 
         if self.attention:
+            out = out.squeeze(0)
             attention = self.att_layer(torch.cat((out, prev_hidden[0]), 1))
             weights = F.softmax(attention, dim=1)
             batch_product = torch.bmm(weights.unsqueeze(0), encoder_outs.unsqueeze(0))
@@ -39,7 +40,6 @@ class Decoder(nn.Module):
 
 def train_decoder(model, ctx_vector, output, criterion, teacher_forcing, outputs, device):
     decoder_input = torch.tensor([[Tokens.SOS.value]]).to(device=device)
-
     # Init first hidden cell with context vector from encoder
     decoder_hidden = ctx_vector
     loss = 0
