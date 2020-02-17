@@ -48,7 +48,7 @@ Data from https://www.manythings.org/anki/, extracted from Tatoeba Project
 - [X] Save model state at defined intervals
 - [ ] Use trained Embeddings (GloVe, Doc2Vec...)
 - [ ] Streamlit playground with trained models (or upload model)
-- [ ] Multiple language pairs support
+- [X] Multiple language pairs support
 - [X] train, dev, test sets
 - [ ] buckets
 - [ ] backward feeding
